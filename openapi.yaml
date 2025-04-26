@@ -1,0 +1,768 @@
+openapi: 3.0.0
+info:
+  title: 1047 Games Third-Party API
+  version: 1.0.0
+  description: |-
+    API for retrieving player statistics, match history, and match details
+    from 1047 Games.
+
+servers:
+  - url: https://api.1047games.com
+    description: 1047 Games public API endpoint
+
+paths:
+  /v1/search/players:
+    get:
+      summary: Search for players
+      description: |-
+        Search for players and get their player IDs.
+        The search is case-insensitive and will return players that match the query.
+        The search will return a number of results less than or equal to the provided limit (default 25).
+        The response includes a page anchor that can be used to retrieve the next page of results.
+      parameters:
+        - name: term
+          in: query
+          required: true
+          schema:
+            type: string
+          description: |-
+            The search term to use for the player search.
+            Currently the only search term supported is for player display name equality.
+            The search term is case-insensitive and will return players that match the query.
+          example: eq(displayName,TheRizzler)
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 25
+            minimum: 1
+            maximum: 100
+          description: Maximum number of results to return
+        - name: anchor
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Opaque page token provided by the previous response in order to paginate results.
+          example: abc123=
+      responses:
+        '200':
+          description: Successful search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalItemCount:
+                    type: integer
+                    description: Total number of items that match the search query
+                    example: 3
+                  nextPageAnchor:
+                    type: string
+                    description: Opaque page token that can be used to retrieve the next page of results.
+                    example: abc123=
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PlayerSearchResult'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /v1/game/splitgate2/players/{playerId}/stats:
+    get:
+      summary: Get player statistics
+      description: |-
+        Retrieve comprehensive statistics for a player.
+        The stats are provided aggregated over all game modes, and split by game mode.
+        Game modes are the top-level categories of gameplay at 1047Games,
+        i.e. Ranked Arena, Unranked Arena, and Custom.
+
+        Querying stats for a player by season is not yet supported, but will be added
+        in the future in a non-breaking fashion.
+
+        Summing stats over specific game variant or weapon is not yet supported.
+      parameters:
+        - name: playerId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Player ID
+          example: 09b74ba4-408f-4121-bf50-7edf11332a65
+      responses:
+        '200':
+          description: Player career statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SummaryPlayerStats'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Player Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /v1/game/splitgate2/players/{playerId}/rank:
+    get:
+      summary: Get current player rank
+      description: Retrieve current rank for a player
+      parameters:
+        - name: playerId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Player ID
+          example: 09b74ba4-408f-4121-bf50-7edf11332a65
+      responses:
+        '200':
+          description: Player rank
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlayerRank'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Player Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /v1/game/splitgate2/players/{playerId}/matches:
+    get:
+      summary: Get player match history
+      description: |-
+        Retrieve match history for a player.
+        The match history is returned in reverse chronological order, with the most recent matches first.
+        The query will return a number of results less than or equal to the provided limit (default 25).
+        The response includes a page anchor that can be used to retrieve the next page of matches.
+      parameters:
+        - name: playerId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Player ID
+          example: 09b74ba4-408f-4121-bf50-7edf11332a65
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 25
+            minimum: 1
+            maximum: 100
+          description: Maximum number of matches to return
+      responses:
+        '200':
+          description: Player match history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalItemCount:
+                    type: integer
+                    description: Total number of matches in the player's match history
+                    example: 3
+                  items:
+                    $ref: '#/components/schemas/PlayerMatch'
+                  nextPageAnchor:
+                    type: string
+                    description: Opaque page token that can be used to retrieve the next page of results.
+                    example: abc123=
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Player Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /v1/game/splitgate2/matches/{matchId}:
+    get:
+      summary: Get match details
+      description: |-
+        Retrieve detailed information about a specific match.
+        The match details include the match status, start and end times, map, game mode, and team details,
+        including placement and members display names and stats for the match.
+      parameters:
+        - name: matchId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Match ID
+          example: 2443ceef-3e4c-45a3-8d18-ff87e22c7cb6
+      responses:
+        '200':
+          description: Match details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchDetails'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Match Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    PlayerSearchResult:
+      type: object
+      required:
+        - playerId
+        - displayName
+      properties:
+        playerId:
+          type: string
+          description: Unique identifier for the player
+          example: 09b74ba4-408f-4121-bf50-7edf11332a65
+        displayName:
+          type: string
+          description: Player's display name
+          example: TheRizzler
+
+    SummaryPlayerStats:
+      type: object
+      required:
+        - summedOver
+      properties:
+        summedOver:
+          $ref: '#/components/schemas/StatsSummedOver'
+        matchesPlayed:
+          type: integer
+          description: Total number of matches played
+          example: 100
+        wins:
+          type: integer
+          description: Total number of wins
+          example: 50
+        losses:
+          type: integer
+          description: Total number of losses
+          example: 50
+        kills:
+          type: integer
+          description: Total number of kills
+          example: 1000
+        deaths:
+          type: integer
+          description: Total number of deaths
+          example: 1000
+        assists:
+          type: integer
+          description: Total number of assists
+          example: 1000
+        damage:
+          type: number
+          description: Total amount of damage dealt
+          example: 100000.7
+        gameModes:
+          type: array
+          items:
+            $ref: '#/components/schemas/SummaryPlayerStats'
+
+    StatsSummedOver:
+      oneOf:
+        - $ref: '#/components/schemas/StatsSummedOverCareer'
+        - $ref: '#/components/schemas/StatsSummedOverMatch'
+        - $ref: '#/components/schemas/StatsSummedOverSeason'
+        - $ref: '#/components/schemas/StatsSummedOverGameMode'
+      discriminator:
+        propertyName: type
+        mapping:
+          Career: '#/components/schemas/StatsSummedOverCareer'
+          Match: '#/components/schemas/StatsSummedOverMatch'
+          Season: '#/components/schemas/StatsSummedOverSeason'
+          GameMode: '#/components/schemas/StatsSummedOverGameMode'
+
+    StatsSummedOverCareer:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum:
+            - Career
+
+    StatsSummedOverGameMode:
+      type: object
+      required:
+        - type
+        - gameModeSlug
+      properties:
+        type:
+          type: string
+          enum:
+            - GameMode
+        gameModeSlug:
+          type: string
+          description: The human-readable identifer for the game mode
+          example: Arena.Ranked
+
+    StatsSummedOverMatch:
+      type: object
+      required:
+        - type
+        - matchId
+      properties:
+        type:
+          type: string
+          enum:
+            - Match
+        matchId:
+          type: string
+          description: The ID of the match
+          example: 2443ceef-3e4c-45a3-8d18-ff87e22c7cb6
+
+    StatsSummedOverSeason:
+      type: object
+      required:
+        - type
+        - seasonSlug
+      properties:
+        type:
+          type: string
+          enum:
+            - Season
+        seasonSlug:
+          type: string
+          description: The human-readable identifer for the season
+          example: Season.0
+
+    PlayerRank:
+      type: object
+      properties:
+        playerId:
+          type: string
+          description: Unique identifier for the player
+
+    PlayerMatch:
+      type: object
+      required:
+        - matchId
+        - joinedAt
+        - leftAt
+        - playlistSlug
+        - mapSlug
+      properties:
+        matchId:
+          type: string
+          description: Unique identifier for the match
+          example: 2443ceef-3e4c-45a3-8d18-ff87e22c7cb6
+        joinedAt:
+          type: string
+          description: Timestamp at which the player joined the match in UTC timezone formatted as an ISO 8601 string
+          example: "2024-01-01T00:00:00Z"
+        leftAt:
+          type: string
+          description: Timestamp at which the player left the match in UTC timezone formatted as an ISO 8601 string
+          example: "2024-01-01T00:00:00Z"
+        playlistSlug:
+          type: string
+          description: Human readable identifier for the playlist that the match was played from
+          example: Arena.Unranked.Quickplay
+        mapSlug:
+          type: string
+          description: Human readable identifier for the map that the match was played on
+          example: Academy
+        stats:
+          $ref: '#/components/schemas/SummaryPlayerStats'
+
+    MatchDetails:
+      type: object
+      required:
+        - matchId
+        - status
+        - startedAt
+        - endedAt
+        - mapSlug
+        - gameModeSlug
+        - gameVariantSlug
+        - teams
+      properties:
+        matchId:
+          type: string
+          description: Unique identifier for the match
+          example: 2443ceef-3e4c-45a3-8d18-ff87e22c7cb6
+        status:
+          type: string
+          description: Status of the match
+          enum:
+            - InProgress
+            - Finished
+            - Crashed
+            - Abandoned
+          example: Finished
+        startedAt:
+          type: string
+          description: Timestamp at which the match started in UTC timezone formatted as an ISO 8601 string
+          example: "2024-01-01T00:00:00Z"
+        endedAt:
+          type: string
+          description: Timestamp at which the match ended in UTC timezone formatted as an ISO 8601 string
+          example: "2024-01-01T00:10:00Z"
+        gameModeSlug:
+          type: string
+          description: Human readable identifier for the game mode that the match was played in
+          example: Arena.Unranked
+        gameVariantSlug:
+          type: string
+          description: Human readable identifier for the game variant that the match was played in
+          example: Arena.Capture.Hotzone
+        playlistSlug:
+          type: string
+          description: |-
+            Human readable identifier for the playlist that the match was played from.
+            The playlist is the experience that the players queue for.
+            Playlist is only present for matches that are played from the matchmaking queue.
+          example: Arena.Unranked.Quickplay
+        mapSlug:
+          type: string
+          description: Human readable identifier for the map that the match was played on
+          example: Academy
+        teams:
+          type: array
+          items:
+            $ref: '#/components/schemas/MatchTeamDetails'
+
+    MatchTeamDetails:
+      type: object
+      required:
+        - teamId
+        - placement
+        - members
+      properties:
+        teamId:
+          type: string
+          description: Unique identifier for the team
+          example: b0f57b43-9ef1-4f13-9066-f04f3bbad86a
+        placement:
+          type: integer
+          description: |-
+            1-indexed placement of the team in the match.
+            The placement is the rank of the team in the match.
+            Lower placement values indicate better performance.
+            Ties are indicated by multiple teams having the same placement value.
+            Placement is only present for finished matches.
+          example: 1
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/MatchPlayerDetails'
+
+    MatchPlayerDetails:
+      type: object
+      required:
+        - playerId
+        - displayName
+        - stats
+      properties:
+        playerId:
+          type: string
+          description: Unique identifier for the player
+          example: 09b74ba4-408f-4121-bf50-7edf11332a65
+        displayName:
+          type: string
+          description: Display name of the player as it would appear in the match
+          example: TheRizzler
+        stats:
+          $ref: '#/components/schemas/SummaryPlayerStats'
+
+    ErrorResponse:
+      type: object
+      required:
+        - reason
+        - message
+        - domain
+        - metadata
+        - error
+      properties:
+        reason:
+          type: string
+          description: |-
+            The reason code for the error.
+            The reason code is a short string that is used to identify the error.
+            The reason code is not localized and is intended for programmatic use.
+            It is recommended to use the reason code as a keyfor localization of user-facing error messages, if needed.
+        message:
+          type: string
+          description: |-
+            A high-level error message, in English.
+            The message is not localized and is intended for developer consumption.
+            It is recommended to use the reason code as a key for localization of user-facing error messages, if needed.
+        domain:
+          type: string
+          description: The logical domain from which the error originates
+          enum:
+            - players
+            - player-stats
+            - matches
+            - player-ranks
+        metadata:
+          type: object
+          description: Additional key-value pairs about the error
+          additionalProperties:
+            type: string
+        error:
+          $ref: '#/components/schemas/ErrorInfo'
+
+    ErrorInfo:
+      oneOf:
+        - $ref: '#/components/schemas/InvalidArgument'
+        - $ref: '#/components/schemas/NotFound'
+        - $ref: '#/components/schemas/PermissionDenied'
+        - $ref: '#/components/schemas/Unauthenticated'
+        - $ref: '#/components/schemas/ResourceExhausted'
+        - $ref: '#/components/schemas/FailedPrecondition'
+        - $ref: '#/components/schemas/Aborted'
+        - $ref: '#/components/schemas/OutOfRange'
+        - $ref: '#/components/schemas/Unimplemented'
+        - $ref: '#/components/schemas/Internal'
+        - $ref: '#/components/schemas/Unavailable'
+        - $ref: '#/components/schemas/DataLoss'
+      discriminator:
+        propertyName: status
+        mapping:
+          InvalidArgument: '#/components/schemas/InvalidArgument'
+          NotFound: '#/components/schemas/NotFound'
+          PermissionDenied: '#/components/schemas/PermissionDenied'
+          Unauthenticated: '#/components/schemas/Unauthenticated'
+          ResourceExhausted: '#/components/schemas/ResourceExhausted'
+          FailedPrecondition: '#/components/schemas/FailedPrecondition'
+          Aborted: '#/components/schemas/Aborted'
+          OutOfRange: '#/components/schemas/OutOfRange'
+          Unimplemented: '#/components/schemas/Unimplemented'
+          Internal: '#/components/schemas/Internal'
+          Unavailable: '#/components/schemas/Unavailable'
+          DataLoss: '#/components/schemas/DataLoss'
+
+    InvalidArgument:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - InvalidArgument
+        violations:
+          type: array
+          items:
+            $ref: '#/components/schemas/RequestViolation'
+
+    NotFound:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - NotFound
+
+    PermissionDenied:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - PermissionDenied
+
+    Unauthenticated:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - Unauthenticated
+
+    ResourceExhausted:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - ResourceExhausted
+        violations:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuotaViolation'
+
+    FailedPrecondition:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - FailedPrecondition
+        violations:
+          type: array
+          items:
+            $ref: '#/components/schemas/PreconditionViolation'
+
+    Aborted:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - Aborted
+
+    OutOfRange:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - OutOfRange
+
+    Unimplemented:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - Unimplemented
+
+    Internal:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - Internal
+
+    Unavailable:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - Unavailable
+
+    DataLoss:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - DataLoss
+
+    Violation:
+      oneOf:
+        - $ref: '#/components/schemas/RequestViolation'
+        - $ref: '#/components/schemas/PreconditionViolation'
+        - $ref: '#/components/schemas/QuotaViolation'
+
+    RequestViolation:
+      type: object
+      required:
+        - field
+        - description
+        - reason
+      properties:
+        field:
+          type: string
+          description: The path to the field that caused the error
+        description:
+          type: string
+          description: Description of why the field is invalid
+        reason:
+          type: string
+          description: The reason code for the violation
+
+    PreconditionViolation:
+      type: object
+      required:
+        - type
+        - subject
+        - description
+      properties:
+        type:
+          type: string
+          description: The type of precondition violation
+        subject:
+          type: string
+          description: The subject of the precondition violation
+        description:
+          type: string
+          description: Description of the precondition violation
+
+    QuotaViolation:
+      type: object
+      required:
+        - subject
+        - description
+      properties:
+        subject:
+          type: string
+          description: The subject of the quota violation
+        description:
+          type: string
+          description: Description of the quota violation
