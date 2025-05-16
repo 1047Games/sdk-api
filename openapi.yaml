@@ -645,7 +645,7 @@ components:
           description: Total amount of damage dealt
           example: 100000.7
           minimum: 0
-        gameModes:
+        matchTypes:
           type: array
           items:
             $ref: '#/components/schemas/SummaryPlayerStats'
@@ -660,10 +660,10 @@ components:
         deaths: 1000
         assists: 1000
         damage: 100000.7
-        gameModes:
+        matchTypes:
           - summedOver:
-              type: GameMode
-              gameModeSlug: 'Arena.Ranked'
+              type: MatchType
+              matchTypeSlug: 'arena_ranked'
             updatedAt: '2024-01-01T00:10:00Z'
             matchesPlayed: 15
             wins: 10
@@ -673,8 +673,8 @@ components:
             assists: 100
             damage: 1000.5
           - summedOver:
-              type: GameMode
-              gameModeSlug: 'Arena.Unranked'
+              type: MatchType
+              matchTypeSlug: 'arena_unranked'
             updatedAt: '2023-12-31T23:50:00Z'
             matchesPlayed: 100
             wins: 50
@@ -715,17 +715,17 @@ components:
       type: object
       required:
         - type
-        - gameModeSlug
+        - matchTypeSlug
       properties:
         type:
           type: string
           enum: 
-            - GameMode
-          example: GameMode
-        gameModeSlug:
+            - MatchType
+          example: MatchType
+        matchTypeSlug:
           type: string
-          description: The human-readable identifer for the game mode
-          example: Arena.Ranked
+          description: The human-readable identifer for the match type
+          example: arena_ranked
 
     StatsSummedOverMatch:
       type: object
@@ -757,24 +757,24 @@ components:
         seasonSlug:
           type: string
           description: The human-readable identifer for the season
-          example: Season.0          
+          example: season_0
 
     PlayerRank:
       type: object
       required:
-        - gameModeSlug
+        - matchTypeSlug
         - rankSlug
         - placement
         - updatedAt
       properties:
-        gameModeSlug:
+        matchTypeSlug:
           type: string
           description: The human-readable identifer for the game mode
-          example: Arena.Ranked
+          example: arena_ranked
         rankSlug:
           type: string
           description: The human-readable identifer for the rank
-          example: Bronze
+          example: bronze
         placement:
           $ref: '#/components/schemas/PlayerRankPlacement'
         updatedAt:
@@ -875,6 +875,7 @@ components:
         - leftAt
         - playlistSlug
         - mapSlug
+        - platform
       properties:
         matchId:
           type: string
@@ -900,12 +901,16 @@ components:
             Human readable identifier for the playlist that the match was played from.
             The playlist is the experience that the players queue for.
             Playlist is only present for matches that are played from the matchmaking queue.
-          example: Arena.Unranked.Quickplay
+          example: arena_unranked_quickplay
         mapSlug:
           type: string
           description: |-
             Human readable identifier for the map that the match was played on.
-          example: Academy
+          example: academy
+        platform:
+          type: string
+          description: Platform that the player was playing on
+          example: Steam
         stats:
           $ref: '#/components/schemas/SummaryPlayerStats'
 
@@ -917,8 +922,8 @@ components:
         - updatedAt
         - startedAt
         - mapSlug
+        - matchTypeSlug
         - gameModeSlug
-        - gameVariantSlug
         - teams
       properties:
         matchId:
@@ -956,24 +961,24 @@ components:
             formatted as an ISO 8601 string. 
             This field is only present for finished matches.
           example: "2024-01-01T00:10:00Z"
+        matchTypeSlug:
+          type: string
+          description: |-
+            Human readable identifier for the match type that the was played.
+          example: arena_unranked
         gameModeSlug:
           type: string
           description: |-
             Human readable identifier for the game mode that the match was played in.
-          example: Arena.Unranked
-        gameVariantSlug:
-          type: string
-          description: |-
-            Human readable identifier for the game variant that the match was played in.
-            The game variant is the specific variant of the game mode that the match was played in.
-          example: Arena.Capture.Hotzone
+            The game mode is the specific ruleset and play style used in the match.
+          example: arena_capture_hotzone
         playlistSlug:
           type: string
           description: |-
             Human readable identifier for the playlist that the match was played from.
             The playlist is the experience that the players queue for.
             Playlist is only present for matches that are played from the matchmaking queue.
-          example: Arena.Unranked.Quickplay
+          example: arena_unranked_quickplay
         mapSlug:
           type: string
           description: Human readable identifier for the map that the match was played on
@@ -1013,6 +1018,7 @@ components:
       required:
         - playerId
         - displayName
+        - platform
         - stats
       properties:
         playerId:
@@ -1032,6 +1038,7 @@ components:
       example:
         playerId: '09b74ba4-408f-4121-bf50-7edf11332a65'
         displayName: 'TheRizzler'
+        platform: Steam
         stats:
           summedOver:
             type: Match
