@@ -3,7 +3,7 @@ info:
   title: 1047 Games Third-Party API
   version: 1.0.0
   description: |-
-    API for retrieving player statistics, player ranks, match history, and 
+    API for retrieving player statistics, player ranks, match history, and
     match details from 1047 Games.
 
 servers:
@@ -22,11 +22,11 @@ paths:
         - Players
       description: |-
         Search for players and get their player IDs.
-        The search is case-insensitive and will return players that 
+        The search is case-insensitive and will return players that
         match the query.
-        The search will return a number of results less than or equal 
+        The search will return a number of results less than or equal
         to the provided limit (default 25).
-        The response includes a page anchor that can be used to retrieve 
+        The response includes a page anchor that can be used to retrieve
         the next page of results.
       parameters:
         - name: term
@@ -36,12 +36,12 @@ paths:
             type: string
           description: |-
             The search term to use for the player search.
-            Currently the only search term supported is for player display 
+            Currently the only search term supported is for player display
             name equality.
-            The search term is case-insensitive and will return players 
+            The search term is case-insensitive and will return players
             that match the query.
             Results are returned in order of relevance to the search term.
-          example: "eq(displayName,TheRizzler)"
+          example: "TheRizzler"
         - name: limit
           in: query
           required: false
@@ -61,7 +61,7 @@ paths:
           schema:
             type: string
           description: |-
-            Opaque page anchor provided by the previous response in order to 
+            Opaque page anchor provided by the previous response in order to
             paginate results.
             Page anchors are only valid in the context of a single query.
             They should not be persisted or used across multiple queries.
@@ -89,9 +89,9 @@ paths:
                   nextPageAnchor:
                     type: string
                     description: |-
-                      Opaque page anchor that can be used to retrieve the next page 
-                      of results. 
-                      Page anchors are only valid in the context of a single query. 
+                      Opaque page anchor that can be used to retrieve the next page
+                      of results.
+                      Page anchors are only valid in the context of a single query.
                       They should not be persisted or used across multiple queries.
                     example: abc123=
                   totalItemCount:
@@ -114,8 +114,7 @@ paths:
                     - field: term
                       reason: INVALID_TERM_OPERATION
                       message: >-
-                        The search term only supports display name equality in the format
-                        eq(displayName,<display_name>).
+                        The search term only supports display name equality.
         '401':
           description: Unauthorized
           content:
@@ -161,15 +160,15 @@ paths:
         - Players
       description: |-
         Retrieve comprehensive statistics for a player.
-        The stats are provided aggregated over all game modes, and split 
+        The stats are provided aggregated over all game modes, and split
         by game mode.
-        Game modes are the top-level categories of gameplay at 1047Games, 
+        Game modes are the top-level categories of gameplay at 1047Games,
         i.e. Ranked Arena, Unranked Arena, and Custom.
 
-        Querying stats for a player by season is not yet supported, but 
+        Querying stats for a player by season is not yet supported, but
         will be added in the future in a non-breaking fashion.
 
-        Summing stats over specific game variant or weapon is not yet 
+        Summing stats over specific game variant or weapon is not yet
         supported.
       parameters:
         - name: playerId
@@ -201,7 +200,7 @@ paths:
                   violations:
                     - field: playerId
                       reason: MISSING_REQUIRED
-                      message: The playerId parameter cannot be empty.   
+                      message: The playerId parameter cannot be empty.
         '401':
           description: Unauthorized
           content:
@@ -237,7 +236,7 @@ paths:
                 message: "No player found for the given player ID."
                 domain: Players
                 error:
-                  status: NotFound 
+                  status: NotFound
         '500':
           description: Internal Server Error
           content:
@@ -293,7 +292,7 @@ paths:
                   violations:
                     - field: playerId
                       reason: MISSING_REQUIRED
-                      message: The playerId parameter cannot be empty.   
+                      message: The playerId parameter cannot be empty.
         '401':
           description: Unauthorized
           content:
@@ -329,7 +328,7 @@ paths:
                 message: "No player found for the given player ID."
                 domain: Players
                 error:
-                  status: NotFound 
+                  status: NotFound
         '500':
           description: Internal Server Error
           content:
@@ -349,13 +348,13 @@ paths:
       operationId: getPlayerMatches
       tags:
         - Players
-      description: |- 
+      description: |-
         Retrieve match history for a player.
-        The match history is returned in reverse chronological order, 
-        with the most recent matches first. 
-        The query will return a number of results less than or equal to the 
-        provided limit (default 25). 
-        The response includes a page anchor that can be used to retrieve the 
+        The match history is returned in reverse chronological order,
+        with the most recent matches first.
+        The query will return a number of results less than or equal to the
+        provided limit (default 25).
+        The response includes a page anchor that can be used to retrieve the
         next page of matches.
       parameters:
         - name: playerId
@@ -384,9 +383,9 @@ paths:
           schema:
             type: string
           description: |-
-            Opaque page anchor provided by the previous response in order to 
+            Opaque page anchor provided by the previous response in order to
             paginate results.
-            Page anchors are only valid in the context of a single query. 
+            Page anchors are only valid in the context of a single query.
             They should not be persisted or used across multiple queries.
           example: abc123=
       responses:
@@ -407,11 +406,11 @@ paths:
                   nextPageAnchor:
                     type: string
                     description: |-
-                      Opaque page anchor that can be used to retrieve the next page 
-                      of results. 
-                      Page anchors are only valid in the context of a single query. 
+                      Opaque page anchor that can be used to retrieve the next page
+                      of results.
+                      Page anchors are only valid in the context of a single query.
                       They should not be persisted or used across multiple queries.
-                    example: abc123=  
+                    example: abc123=
                   totalItemCount:
                     type: integer
                     description: Total number of matches in the player's match history
@@ -431,7 +430,7 @@ paths:
                   violations:
                     - field: playerId
                       reason: MISSING_REQUIRED
-                      message: The playerId parameter cannot be empty.   
+                      message: The playerId parameter cannot be empty.
         '401':
           description: Unauthorized
           content:
@@ -467,7 +466,7 @@ paths:
                 message: "No player found for the given player ID."
                 domain: Players
                 error:
-                  status: NotFound 
+                  status: NotFound
         '500':
           description: Internal Server Error
           content:
@@ -489,8 +488,8 @@ paths:
         - Matches
       description: |-
         Retrieve detailed information about a specific match.
-        The match details include the match status, start and end times, map, 
-        game mode, and team details, including placement and members display 
+        The match details include the match status, start and end times, map,
+        game mode, and team details, including placement and members display
         names and stats for the match.
       parameters:
         - name: matchId
@@ -558,7 +557,7 @@ paths:
                 message: "No match found for the given match ID."
                 domain: Matches
                 error:
-                  status: NotFound 
+                  status: NotFound
         '500':
           description: Internal Server Error
           content:
@@ -607,7 +606,7 @@ components:
           type: string
           format: date-time
           description: |-
-            The timestamp at which the stats were last updated in UTC timezone 
+            The timestamp at which the stats were last updated in UTC timezone
             formatted as an ISO 8601 string.
           example: "2024-01-01T00:10:00Z"
         matchesPlayed:
@@ -690,7 +689,7 @@ components:
         - $ref: '#/components/schemas/StatsSummedOverMatch'
         - $ref: '#/components/schemas/StatsSummedOverSeason'
         - $ref: '#/components/schemas/StatsSummedOverGameMode'
-      discriminator: 
+      discriminator:
         propertyName: type
         mapping:
           Career: '#/components/schemas/StatsSummedOverCareer'
@@ -707,7 +706,7 @@ components:
       properties:
         type:
           type: string
-          enum: 
+          enum:
             - Career
           example: Career
 
@@ -719,7 +718,7 @@ components:
       properties:
         type:
           type: string
-          enum: 
+          enum:
             - MatchType
           example: MatchType
         matchTypeSlug:
@@ -733,9 +732,9 @@ components:
         - type
         - matchId
       properties:
-        type: 
+        type:
           type: string
-          enum: 
+          enum:
             - Match
           example: Match
         matchId:
@@ -751,7 +750,7 @@ components:
       properties:
         type:
           type: string
-          enum: 
+          enum:
             - Season
           example: Season
         seasonSlug:
@@ -781,7 +780,7 @@ components:
           type: string
           format: date-time
           description: |-
-            The timestamp at which the rank was last updated in UTC timezone 
+            The timestamp at which the rank was last updated in UTC timezone
             formatted as an ISO 8601 string.
           example: "2024-01-01T00:10:00Z"
 
@@ -802,7 +801,7 @@ components:
           type: integer
           description: |-
             The rank points of the player within the absolute rank.
-            There is no upper limit to the number of points a player can have in 
+            There is no upper limit to the number of points a player can have in
             an absolute placement rank.
             Higher points indicate better performance.
           minimum: 0
@@ -810,7 +809,7 @@ components:
         absolutePlacement:
           type: integer
           description: |-
-            The 1-indexed placement of the player within the rank (between 1 and 
+            The 1-indexed placement of the player within the rank (between 1 and
             maximumPlacement).
             The placement is the rank of the player in the rank.
             Lower placement values indicate better performance.
@@ -819,7 +818,7 @@ components:
         maximumPlacement:
           type: integer
           description: |-
-            The maximum placement of the rank (i.e. the worst placement a 
+            The maximum placement of the rank (i.e. the worst placement a
             player can achieve in the rank.)
           minimum: 1
           example: 10
@@ -845,7 +844,7 @@ components:
           type: integer
           description: |-
             The maximum points a player can have in a division.
-            Once the player exceeds this point ceiling, they will rank up to 
+            Once the player exceeds this point ceiling, they will rank up to
             the next division.
             If absent, there is no point ceiling for the division.
           minimum: 0
@@ -853,7 +852,7 @@ components:
         divisionPlacement:
           type: integer
           description: |-
-            The 1-indexed division of the player within the rank (between 1 
+            The 1-indexed division of the player within the rank (between 1
             and maximumDivision).
             The division is the rank of the player in the rank.
             Lower division values indicate better performance.
@@ -861,11 +860,11 @@ components:
           minimum: 1
         maximumDivision:
           type: integer
-          description: |- 
-            The maximum division of the rank (i.e. the worst division a 
+          description: |-
+            The maximum division of the rank (i.e. the worst division a
             player can achieve in the rank.)
           example: 5
-          minimum: 1   
+          minimum: 1
 
     PlayerMatch:
       type: object
@@ -885,14 +884,14 @@ components:
           type: string
           format: date-time
           description: |-
-            The timestamp at which the player joined the match in UTC timezone 
+            The timestamp at which the player joined the match in UTC timezone
             formatted as an ISO 8601 string.
           example: "2024-01-01T00:00:00Z"
         leftAt:
           type: string
           format: date-time
           description: |-
-            The timestamp at which the player left the match in UTC timezone 
+            The timestamp at which the player left the match in UTC timezone
             formatted as an ISO 8601 string.
           example: "2024-01-01T00:00:00Z"
         playlistSlug:
@@ -943,22 +942,22 @@ components:
           type: string
           format: date-time
           description: |-
-            The timestamp at which the match was last updated in UTC timezone 
+            The timestamp at which the match was last updated in UTC timezone
             formatted as an ISO 8601 string.
           example: "2024-01-01T00:10:00Z"
         startedAt:
           type: string
           format: date-time
           description: |-
-            The timestamp at which the match started in UTC timezone 
+            The timestamp at which the match started in UTC timezone
             formatted as an ISO 8601 string.
           example: "2024-01-01T00:00:00Z"
         endedAt:
           type: string
           format: date-time
           description: |-
-            The timestamp at which the match ended in UTC timezone 
-            formatted as an ISO 8601 string. 
+            The timestamp at which the match ended in UTC timezone
+            formatted as an ISO 8601 string.
             This field is only present for finished matches.
           example: "2024-01-01T00:10:00Z"
         matchTypeSlug:
@@ -986,7 +985,7 @@ components:
         teams:
           type: array
           items:
-            $ref: '#/components/schemas/MatchTeamDetails'            
+            $ref: '#/components/schemas/MatchTeamDetails'
 
     MatchTeamDetails:
       type: object
@@ -1049,7 +1048,7 @@ components:
           kills: 10
           deaths: 2
           assists: 5
-          damage: 1000.5      
+          damage: 1000.5
 
     ErrorResponse:
       type: object
@@ -1066,15 +1065,15 @@ components:
             The reason code for the error.
             The reason code is a short string that is used to identify the error.
             The reason code is not localized and is intended for programmatic use.
-            It is recommended to use the reason code as a keyfor localization of 
+            It is recommended to use the reason code as a keyfor localization of
             user-facing error messages, if needed.
           example: INVALID_REQUEST
         message:
           type: string
-          description: |- 
+          description: |-
             A high-level error message, in English.
             The message is not localized and is intended for developer consumption.
-            It is recommended to use the reason code as a key for localization of 
+            It is recommended to use the reason code as a key for localization of
             user-facing error messages, if needed.
           example: The request is invalid.
         domain:
@@ -1086,12 +1085,12 @@ components:
           example: Players
         metadata:
           type: object
-          description: |- 
+          description: |-
             Additional key-value pairs about the error, the request that caused the error,
             or the state of the system at the time of the error.
           additionalProperties:
             type: string
-          example: 
+          example:
             "playerId": "09b74ba4-408f-4121-bf50-7edf11332a65"
             "matchId": "2443ceef-3e4c-45a3-8d18-ff87e22c7cb6"
         error:
@@ -1132,7 +1131,7 @@ components:
       properties:
         status:
           type: string
-          enum: 
+          enum:
             - InvalidArgument
           example: InvalidArgument
         violations:
@@ -1145,7 +1144,7 @@ components:
       properties:
         status:
           type: string
-          enum: 
+          enum:
             - NotFound
           example: NotFound
 
@@ -1154,7 +1153,7 @@ components:
       properties:
         status:
           type: string
-          enum: 
+          enum:
             - PermissionDenied
           example: PermissionDenied
 
@@ -1163,7 +1162,7 @@ components:
       properties:
         status:
           type: string
-          enum: 
+          enum:
             - Unauthenticated
           example: Unauthenticated
 
@@ -1172,7 +1171,7 @@ components:
       properties:
         status:
           type: string
-          enum: 
+          enum:
             - ResourceExhausted
           example: ResourceExhausted
         violations:
@@ -1185,7 +1184,7 @@ components:
       properties:
         status:
           type: string
-          enum: 
+          enum:
             - FailedPrecondition
           example: FailedPrecondition
         violations:
@@ -1198,7 +1197,7 @@ components:
       properties:
         status:
           type: string
-          enum: 
+          enum:
             - Aborted
           example: Aborted
 
@@ -1207,7 +1206,7 @@ components:
       properties:
         status:
           type: string
-          enum: 
+          enum:
             - OutOfRange
           example: OutOfRange
 
@@ -1216,7 +1215,7 @@ components:
       properties:
         status:
           type: string
-          enum: 
+          enum:
             - Unimplemented
           example: Unimplemented
 
@@ -1225,7 +1224,7 @@ components:
       properties:
         status:
           type: string
-          enum: 
+          enum:
             - Internal
           example: Internal
 
@@ -1234,7 +1233,7 @@ components:
       properties:
         status:
           type: string
-          enum: 
+          enum:
             - Unavailable
           example: Unavailable
 
@@ -1243,8 +1242,8 @@ components:
       properties:
         status:
           type: string
-          enum: 
-            - DataLoss   
+          enum:
+            - DataLoss
           example: DataLoss
 
     RequestViolation:
