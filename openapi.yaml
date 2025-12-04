@@ -36,8 +36,8 @@ paths:
             type: string
           description: |-
             The search term to use for the player search.
-            Currently the only search term supported is for player display
-            name equality.
+            The currently supported search terms are player display
+            name and player id equality.
             The search term is case-insensitive and will return players
             that match the query.
             Results are returned in order of relevance to the search term.
@@ -111,10 +111,14 @@ paths:
                 error:
                   status: InvalidArgument
                   violations:
-                    - field: term
-                      reason: INVALID_TERM_OPERATION
+                    - field: limit
+                      reason: INVALID_VALUE
                       message: >-
-                        The search term only supports display name equality.
+                        The limit must be between 1 and 100, inclusive.
+                    - field: term
+                      reason: INVALID_VALUE
+                      message: >-
+                        The search term must be between 3 and 100 characters in length.
         '401':
           description: Unauthorized
           content:
@@ -634,6 +638,11 @@ components:
           description: Total number of deaths
           example: 1000
           minimum: 0
+        suicides:
+          type: integer
+          description: Total number of suicides
+          example: 1000
+          minimum: 0
         assists:
           type: integer
           description: Total number of assists
@@ -644,7 +653,221 @@ components:
           description: Total amount of damage dealt
           example: 100000.7
           minimum: 0
+        score:
+          type: integer
+          description: Total score achieved
+          example: 50000
+          minimum: 0
+        xp:
+          type: integer
+          description: Total experience points earned
+          example: 25000
+          minimum: 0
+        roundWins:
+          type: integer
+          description: Total number of rounds won
+          example: 200
+          minimum: 0
+        killsAndAssists:
+          type: integer
+          description: Total number of kills and assists combined
+          example: 2000
+          minimum: 0
+        matchWins:
+          type: integer
+          description: Total number of match wins
+          example: 45
+          minimum: 0
+        itemsPickedUp:
+          type: integer
+          description: Total number of items picked up
+          example: 500
+          minimum: 0
+        hits:
+          type: integer
+          description: Total number of hits
+          example: 5000
+          minimum: 0
+        shotsFired:
+          type: integer
+          description: Total number of shots fired
+          example: 8000
+          minimum: 0
+        precisionHits:
+          type: integer
+          description: Total number of precision hits
+          example: 1500
+          minimum: 0
+        reloads:
+          type: integer
+          description: Total number of reloads
+          example: 800
+          minimum: 0
+        medalBackPain:
+          type: integer
+          description: Number of Back Pain medals earned for low health kills
+          example: 5
+          minimum: 0
+        medalPhantomMenace:
+          type: integer
+          description: Number of Phantom Menace medals earned for getting a kill after you die
+          example: 3
+          minimum: 0
+        medalCloseCall:
+          type: integer
+          description: Number of Close Call medals earned for one-hit kills
+          example: 8
+          minimum: 0
+        medalAvengerKill:
+          type: integer
+          description: Number of Avenger Kill medals earned for killing an enemy who killed your teammate
+          example: 12
+          minimum: 0
+        medalRevengeKill:
+          type: integer
+          description: Number of Revenge Kill medals earned for killing an enemy who killed you
+          example: 7
+          minimum: 0
+        medalAssistKill:
+          type: integer
+          description: Number of Assist Kill medals earned for killing an enemy shortly after assisting
+          example: 25
+          minimum: 0
+        medalGuardianAngel:
+          type: integer
+          description: Number of Guardian Angel medals earned for killing an enemy while they attack a teammate
+          example: 4
+          minimum: 0
+        medalPortalFlankKill:
+          type: integer
+          description: Number of Portal Flank Kill medals earned for kills using portal flanking tactics
+          example: 6
+          minimum: 0
+        medalComebackKill:
+          type: integer
+          description: Number of Comeback Kill medals earned for kills during comeback situations
+          example: 9
+          minimum: 0
+        precisionKills:
+          type: integer
+          description: Total number of precision kills including headshots and critical hits
+          example: 150
+          minimum: 0
+        medalShowstopper:
+          type: integer
+          description: Number of Showstopper medals earned for killing the top player on the enemy team
+          example: 2
+          minimum: 0
+        medalSuicideKill:
+          type: integer
+          description: Number of Suicide Kill medals earned for killing yourself and an enemy simultaneously
+          example: 1
+          minimum: 0
+        medalFromDownTown:
+          type: integer
+          description: Number of From Down Town medals earned for long-distance kills
+          example: 10
+          minimum: 0
+        medalFinalStand:
+          type: integer
+          description: Number of Final Stand medals earned for getting a kill while being the last player standing
+          example: 3
+          minimum: 0
+        capturePointCaptures:
+          type: integer
+          description: Total number of capture point captures completed
+          example: 75
+          minimum: 0
+        medalCapturePointKill:
+          type: integer
+          description: Number of Capture Point Kill medals earned for kills while capturing or defending points
+          example: 15
+          minimum: 0
+        medalCapturePointWipe:
+          type: integer
+          description: Number of Capture Point Wipe medals earned for clearing all enemies from a capture point
+          example: 2
+          minimum: 0
+        multikill2:
+          type: integer
+          description: Number of 2 kills in quick succession
+          example: 50
+          minimum: 0
+        multikill3:
+          type: integer
+          description: Number of 3 kills in quick succession
+          example: 20
+          minimum: 0
+        multikill4:
+          type: integer
+          description: Number of 4 kills in quick succession
+          example: 8
+          minimum: 0
+        multikill5:
+          type: integer
+          description: Number of 5 kills in quick succession
+          example: 3
+          minimum: 0
+        multikill6:
+          type: integer
+          description: Number of 6 kills in quick succession
+          example: 1
+          minimum: 0
+        multikill7:
+          type: integer
+          description: Number of 7 kills in quick succession
+          example: 0
+          minimum: 0
+        killstreak2:
+          type: integer
+          description: Number of 2 consecutive kills without dying
+          example: 40
+          minimum: 0
+        killstreak3:
+          type: integer
+          description: Number of 3 consecutive kills without dying
+          example: 25
+          minimum: 0
+        killstreak4:
+          type: integer
+          description: Number of 4 consecutive kills without dying
+          example: 15
+          minimum: 0
+        killstreak5:
+          type: integer
+          description: Number of 5 consecutive kills without dying
+          example: 10
+          minimum: 0
+        killstreak6:
+          type: integer
+          description: Number of 6 consecutive kills without dying
+          example: 6
+          minimum: 0
+        killstreak7:
+          type: integer
+          description: Number of 7 consecutive kills without dying
+          example: 4
+          minimum: 0
+        killstreak8:
+          type: integer
+          description: Number of 8 consecutive kills without dying
+          example: 2
+          minimum: 0
+        killstreak9:
+          type: integer
+          description: Number of 9 consecutive kills without dying
+          example: 1
+          minimum: 0
+        killstreak10:
+          type: integer
+          description: Number of 10 consecutive kills without dying
+          example: 1
+          minimum: 0
         matchTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/SummaryPlayerStats'
+        seasons:
           type: array
           items:
             $ref: '#/components/schemas/SummaryPlayerStats'
@@ -657,31 +880,89 @@ components:
         losses: 50
         kills: 1000
         deaths: 1000
+        suicides: 100
         assists: 1000
         damage: 100000.7
+        score: 50000
+        xp: 25000
+        roundWins: 200
+        killsAndAssists: 2000
+        matchWins: 45
+        itemsPickedUp: 500
+        hits: 5000
+        shotsFired: 8000
+        precisionHits: 1500
+        precisionKills: 150
+        multikill2: 50
+        multikill3: 20
+        killstreak5: 10
+        capturePointCaptures: 75
         matchTypes:
           - summedOver:
               type: MatchType
-              matchTypeSlug: 'arena_ranked'
+              matchTypeSlug: 'arenaranked'
             updatedAt: '2024-01-01T00:10:00Z'
             matchesPlayed: 15
             wins: 10
             losses: 5
             kills: 100
             deaths: 100
+            suicides: 10
             assists: 100
             damage: 1000.5
+            score: 5000
+            xp: 2500
+            roundWins: 30
+            multikill2: 8
           - summedOver:
               type: MatchType
-              matchTypeSlug: 'arena_unranked'
+              matchTypeSlug: 'arenaunranked'
             updatedAt: '2023-12-31T23:50:00Z'
             matchesPlayed: 100
             wins: 50
             losses: 50
             kills: 900
             deaths: 900
+            suicides: 90
             assists: 900
             damage: 9000.2
+            score: 45000
+            xp: 22500
+            roundWins: 170
+            multikill2: 42
+        seasons:
+          - summedOver:
+              type: Season
+              seasonSlug: 'season_1'
+            updatedAt: '2024-01-01T00:10:00Z'
+            matchesPlayed: 15
+            wins: 10
+            losses: 5
+            kills: 100
+            deaths: 100
+            suicides: 10
+            assists: 100
+            damage: 1000.5
+            score: 5000
+            xp: 2500
+            roundWins: 30
+            multikill2: 8
+          - summedOver:
+              type: Season
+              seasonSlug: 'season_0'
+            updatedAt: '2023-12-31T23:50:00Z'
+            matchesPlayed: 100
+            wins: 50
+            losses: 50
+            kills: 900
+            deaths: 900
+            suicides: 90
+            assists: 900
+            damage: 9000.2
+            score: 45000
+            xp: 22500
+            roundWins: 170
+            multikill2: 42
 
     StatsSummedOver:
       oneOf:
@@ -724,7 +1005,7 @@ components:
         matchTypeSlug:
           type: string
           description: The human-readable identifer for the match type
-          example: arena_ranked
+          example: arenaranked
 
     StatsSummedOverMatch:
       type: object
@@ -769,7 +1050,7 @@ components:
         matchTypeSlug:
           type: string
           description: The human-readable identifer for the game mode
-          example: arena_ranked
+          example: arenaranked
         rankSlug:
           type: string
           description: The human-readable identifer for the rank
@@ -964,7 +1245,7 @@ components:
           type: string
           description: |-
             Human readable identifier for the match type that the was played.
-          example: arena_unranked
+          example: arenaunranked
         gameModeSlug:
           type: string
           description: |-
@@ -1047,8 +1328,16 @@ components:
           wins: 1
           kills: 10
           deaths: 2
+          suicides: 1
           assists: 5
           damage: 1000.5
+          score: 2500
+          xp: 1200
+          roundWins: 3
+          hits: 25
+          shotsFired: 35
+          precisionKills: 3
+          multikill2: 1
 
     ErrorResponse:
       type: object
