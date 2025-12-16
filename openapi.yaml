@@ -1136,13 +1136,13 @@ components:
             The 1-indexed division of the player within the rank (between 1
             and maximumDivision).
             The division is the rank of the player in the rank.
-            Lower division values indicate better performance.
+            Higher division values indicate better performance.
           example: 1
           minimum: 1
         maximumDivision:
           type: integer
           description: |-
-            The maximum division of the rank (i.e. the worst division a
+            The maximum division of the rank (i.e. the best division a
             player can achieve in the rank.)
           example: 5
           minimum: 1
